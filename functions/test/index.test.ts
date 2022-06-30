@@ -1,4 +1,17 @@
-const Twilio = require("twilio");
+
+const { createClient } = require('redis');
+const redis = createClient({
+  url: "redis://relay.georgeanthony.net:6379",
+  password: "cosmiccap1!",
+});
+redis.connect().then(async ()=> {
+    await redis.set('2',JSON.stringify({'5164979806':12344}))
+    let r = JSON.parse(await redis.get('2') || '{}')
+    console.log(r)
+    redis.disconnect()
+});
+
+/*const Twilio = require("twilio");
 
 const SID = "AC688466c5775a5441bc7e9e15b774ccb5";
 const ATOKEN = "6d80905c9144e65f95e25473755b923e";
@@ -44,7 +57,7 @@ async function getMessages(query) {
         console.log(e);
     }
 }
-run()
+run()*/
 /**
  *
  * Get latest messages

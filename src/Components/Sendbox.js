@@ -33,7 +33,7 @@ export function Sendbox({setUpload, setSendTarget, sendTarget, userData, db, sen
     let nums = []
     userData.contacts.forEach(c=>{
       c.numbers.forEach(n=>{
-        nums.push({name:c.name, num:n, tags:c.tags})
+        nums.push({name:c.name, num:n})
       })
     })
     nums.forEach((n,i)=>{
@@ -51,16 +51,15 @@ export function Sendbox({setUpload, setSendTarget, sendTarget, userData, db, sen
     }
   }
 
-
   const  options = Object.keys(contacts).filter(con=>{
     const c = contacts[con].name 
-    const tags = contacts[con].tags
     return (state.tempValue !='' && 
-      (tags?.includes(state.tempValue.toLowerCase()) ||
-      c.toLowerCase().includes(state.tempValue.toLowerCase())) &&
+      c.toLowerCase().includes(state.tempValue.toLowerCase()) &&
       !exists(contacts[con]))
-  }).map(c=>(contacts[c])).concat(state.tempValue != '' ? [state.tempValue] : []) //NOW SORT BASED ON FIRST & LASTNAME MATCHES & STARTSWITH
+  }).map(c=>(contacts[c]))
+  .concat(state.tempValue != '' && !userData.tags?.includes(state.tempValue)? [state.tempValue] : []) //NOW SORT BASED ON FIRST & LASTNAME MATCHES & STARTSWITH
   .sort((a,b) => (a == state.tempValue ? -1 : b == state.tempValue ? 1 : a.name.split(' ')[0].toLowerCase() == state.tempValue.toLowerCase() ? -1 : b.name.split(' ')[0].toLowerCase() == state.tempValue.toLowerCase() ? 1 : a.name.split(' ')[1].toLowerCase() == state.tempValue.toLowerCase() ? -1 : b.name.split(' ')[1].toLowerCase() == state.tempValue.toLowerCase() ? 1 : a.name.startsWith(state.tempValue) ? -1 : b.name.startsWith(state.tempValue) ? 1 : a.name > b.name ? 1 : a.name < b.name ? -1 : 0 ))
+  .concat(userData.tags?.filter(tag => (tag.includes(state.tempValue) && state.tempValue != '')) || [])
 
   function exists(c) {
     let e = false
@@ -68,7 +67,7 @@ export function Sendbox({setUpload, setSendTarget, sendTarget, userData, db, sen
       const num = t.num || t
       const name = t.name || false
       console.log(t)
-      if (formatNumber(num) == formatNumber(c.num) && (!name || c.name == t.name)) e = true
+      if (formatNumber(num) == formatNumber(c.num) && (!name || c.name == t.name) || t == c) e = true
     })
     return e
   }
@@ -90,7 +89,7 @@ export function Sendbox({setUpload, setSendTarget, sendTarget, userData, db, sen
     </IconButton>
     <Autocomplete multiple id="send-input" freeSolo sx={{ ml: 1, flex: 1 }}   
       ref={form} limitTags={2} fullWidth
-      options={options.map(v=>(typeof v == 'string' ? v : `${v.name} - ${v.num}`))}
+      options={options.map(v=>(v.num ? `${v.name} - ${v.num}` : !userData.tags?.includes(v) ? v : `Tag - ${v}`))}
       value={sendTarget.map(v=>{ return typeof v == 'string' ? v : sendTarget.length == 1 ? v.name : v.num})}
       renderTags={(value, getTagProps) => {
         const numTags = value.length
@@ -118,6 +117,9 @@ export function Sendbox({setUpload, setSendTarget, sendTarget, userData, db, sen
             setState({...state, value:value, tempValue:''})
           } else if (r=='clear') {
             setState({...state, value:v, tempValue:''})
+          } else if (userData.tags.includes(val.split('-')[1].trim())) {
+            const value = [...new Set(sendTarget.concat([val.split('-')[1].trim()]))]
+            setState({...state, value:value, tempValue:''})
           } else {
             val=val.split('-').map(v=>(v.trim()))
             const conts = Object.keys(contacts).filter(c =>(contacts[c].name == val[0] && 
@@ -164,7 +166,8 @@ export function Sendbox({setUpload, setSendTarget, sendTarget, userData, db, sen
           onPaste={e=>{
             e.preventDefault()
             const clipboardData = e.clipboardData || window.clipboardData
-            const char = clipboardData.getData('Text').includes(',') ? ',' : ' '
+            const match = /\r|\n/.exec(clipboardData.getData('Text'))
+            const char = match ? /\r?\n/:clipboardData.getData('Text').includes(',') ? ',' : ' '
             const v = [...new Set(clipboardData.getData('Text').split(char)
               .filter(i=>(validFormat.test(i.trim()))).map(i=>(formatNumber(i))))]
             const value = [...new Set(sendTarget.concat(v))]

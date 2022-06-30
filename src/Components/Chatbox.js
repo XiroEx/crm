@@ -1,5 +1,5 @@
 import { Drafts, Send } from '@mui/icons-material';
-import { Box, CircularProgress, Grid, IconButton, InputAdornment, TextField } from "@mui/material";
+import { Backdrop, Box, CircularProgress, Grid, IconButton, InputAdornment, TextField } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatNumber } from "../functions/extractnumbers";
@@ -11,6 +11,7 @@ export function Chatbox({sendTarget, sendText, active, userData, db,
   const value = sendValue || ''
   const setValue = setSendValue
   const [loading, setLoading] = useState(false)
+  const [fullLoading, setFullLoading] = useState(false)
   const [save, setSave] = useState(false)
   const navigate = useNavigate()
   const ref = useRef()
@@ -30,18 +31,27 @@ export function Chatbox({sendTarget, sendText, active, userData, db,
           InputProps={{sx:{color:value.length > 160 ? 'red':'',},endAdornment:<InputAdornment position='end'>
             <IconButton edge="end" onClick={()=>{
               console.log({ from:active,to:sendTarget,body:value});
-              const sendT=sendTarget.map(t=>(t.num ? formatNumber(t.num) : formatNumber(t)))
+              let sendT = []
+              sendTarget.forEach( t => {
+                if (userData.tags.includes(t)) {
+                  userData.contacts.forEach( c => {
+                    if (c.tags?.includes(t)) sendT.push(c.primary)
+                  })
+                } else sendT.push(t.num ? formatNumber(t.num) : formatNumber(t))
+              })
               setLoading(true)
               if (!userData.active){
                  alert('Account inactive. Contact billing administrator or support.')
                  setLoading(false)
-              } else if (userData.credits && userData.credits > sendT.length) {
+              } else if (userData.credits && userData.credits < sendT.length) {
                 alert(`Insufficient credits. ${userData.id == userData.billing ? 'Purchase credits on account page':'Contact billing administrator'}`)
                 
               } else sendText({ from:active,to:sendT,body:value,userData:userData})
               .then(async result => {
-                if (sendT.length == 1) {
-                  let newInbox = inbox.slice()
+                if (!result.data.success){ 
+                  alert(`Insufficient credits. ${userData.id == userData.billing ? 'Purchase credits on account page':'Contact billing administrator'}`)
+                } else if (sendT.length == 1 && !userData.tags.includes(sendT[0])) {
+                  let newInbox = inbox ? inbox.slice() : []
                   let index = false
                   for (const [i, c] of newInbox.entries()) {
                     if(c.number == sendT[0]) index = i
@@ -61,8 +71,10 @@ export function Chatbox({sendTarget, sendText, active, userData, db,
                 }
                 setValue('')
                 setLoading(false)
-                if (sendTarget.length == 1) 
+                if (result.data.sent > 1) alert(`Sent ${result.data.sent}`)
+                if (sendTarget.length == 1 && !userData.tags?.includes(sendTarget[0])) 
                   navigate(`/conversations/${sendTarget[0].num ? formatNumber(sendTarget[0].num) : formatNumber(sendTarget[0])}`)
+                else navigate('/conversations')
               })}}>{loading ? <CircularProgress style={{height:20, width:20}}/>:<Send/>}
             </IconButton>
           </InputAdornment>}}
@@ -71,5 +83,7 @@ export function Chatbox({sendTarget, sendText, active, userData, db,
       </Grid>
     </Grid>
     <SaveDraft {...{save, setSave, value, setValue, userData, db}}/>
+
+    <Backdrop open={loading} sx={{zIndex:'10000'}}><CircularProgress/></Backdrop>
   </Box>
 }

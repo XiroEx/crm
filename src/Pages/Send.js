@@ -63,8 +63,8 @@ export function Send({
             let newV = JSON.parse(JSON.stringify(ref.current))
             let index = false
             newV.forEach((val,i) => {
-              val = typeof val == 'string' ? formatNumber(val) : formatNumber(val.num)
-              t = typeof t == 'string' ? formatNumber(t) : formatNumber(t.num)
+              val = val.num ? formatNumber(val.num) : userData.tags.includes(val) ? val : formatNumber(val)
+              t = t.num ? formatNumber(t.num) : userData.tags.includes(t) ? t : formatNumber(t)
               if (t == val) {
                 index = i
                 return
@@ -78,7 +78,7 @@ export function Send({
             sx={{p:0,m:.25, width:'32%', maxWidth:'128px'}}/>
         ))}
       </List>}
-      {sendTarget.length == 1 && <>
+      {(sendTarget.length == 1 && !userData.tags?.includes(sendTarget[0])) && <>
         {inbox && <List sx={{pt:'40px'}}>
           {messages.length > 0 && messages.map(m=>(<MessageBubble message={m}/>))}
           <Box sx={{m:3}} ref={bottom}/>

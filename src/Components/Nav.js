@@ -8,6 +8,7 @@ import { Search } from './Searchbar';
 import { Sendbox } from "./Sendbox";
 import extractnumbers, { formatNumber} from "../functions/extractnumbers";
 
+let last = false
 export function Nav({auth, searchTarget, logged, user, signOut, setSendTarget, sendTarget, sendValue, setSendValue, userData, active, db}) {
     const location = useLocation()
     const navigate = useNavigate()
@@ -40,7 +41,8 @@ export function Nav({auth, searchTarget, logged, user, signOut, setSendTarget, s
         if (isFirstRun.current) {
             isFirstRun.current = false
             return
-        } else if (userData.lastMessage) {
+        } else if (userData.lastMessage && (!last || JSON.stringify(last) == JSON.stringify(userData.lastMessage))) {
+            last = JSON.stringify(last)
             setSnack(userData.lastMessage)
         }
     },[userData.lastMessage])
@@ -55,12 +57,12 @@ export function Nav({auth, searchTarget, logged, user, signOut, setSendTarget, s
         <Divider />
         <List sx={{width:'240px',}}>
         {['Send', 'Conversations', 'Drafts', 'Contacts'].map((text, index) => (
-            <><Link to={`/${text.toLowerCase()}`} onClick={handleDrawerToggle}><ListItem button key={text} style={{color:'#fff'}} >
-            <ListItemIcon  style={{color:'#fff'}} >
-                {icons[index]}
-            </ListItemIcon>
-            <ListItemText primary={text}/>
-            </ListItem></Link></>
+            <ListItem button key={text} style={{color:'#fff'}} onClick={()=>{navigate(`/${text.toLowerCase()}`); handleDrawerToggle()}}>
+                <ListItemIcon  style={{color:'#fff'}} >
+                    {icons[index]}
+                </ListItemIcon>
+                <ListItemText primary={text}/>
+            </ListItem>
         ))}
         </List>
         <Divider />
@@ -84,7 +86,7 @@ export function Nav({auth, searchTarget, logged, user, signOut, setSendTarget, s
                 </IconButton>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign:{lg:'left'}, fontVariant:'small-caps' }}
                     onClick={()=>{if(contact) navigate(`/contacts/${param}`)}}>
-                    {contact || param || loc || 'GA CRM'}
+                    {contact || param && param.length > 15 ? loc : param || loc || 'SampleCRM'}
                 </Typography>
                 {logged ? <Button color="inherit">Login</Button> : <IconButton color='inherit' onClick={()=>setSearch(search == 'open' ? 'close' : 'open')}><SearchIcon/></IconButton>}
             </Toolbar>
@@ -92,19 +94,19 @@ export function Nav({auth, searchTarget, logged, user, signOut, setSendTarget, s
                 <Search searchString={searchString} searchTarget={searchTarget} setSearchString={setSearchString} open={search}/>
             </Box>
             <Box sx={{ml:{lg:'240px'}}} className={(location.pathname.split('/')[1] == 'send' && search !== 'open') ? 'scroll-in-top':'hidden'}>
-                <Sendbox {...{db, userData, sendTarget, setSendTarget, setUpload, sendValue, setSendValue, active}} />
+                {location.pathname.split('/')[1] == 'send' && userData && <Sendbox {...{db, userData, sendTarget, setSendTarget, setUpload, sendValue, setSendValue, active}} />}
             </Box>
         </AppBar>
 
         <Drawer anchor={'left'} open={open} onClose={handleDrawerToggle} variant='temporary' sx={{display:{xs:'block',lg:'none'}}}
             PaperProps={{sx:{bgcolor:'primary.main'}}}>
             {Menu}      
-            {user && <Button sx={{color:'#fff'}} onClick={()=>{signOut(auth); setOpen(false)}}>Sign Out</Button> }    
+            {user && <Button sx={{color:'#fff'}} onClick={()=>{signOut(); setOpen(false)}}>Sign Out</Button> }    
         </Drawer>
         <Drawer anchor={'left'} open={true} variant='persistent' sx={{display:{xs:'none',lg:'block',}, fontVariant:'normal', color:'white'}}
             PaperProps={{sx:{bgcolor:'primary.main'}}}>
             {Menu} 
-            {user && <Button sx={{color:'#fff'}} onClick={()=>{signOut(auth); setOpen(false)}}>Sign Out</Button> }    
+            {user && <Button sx={{color:'#fff'}} onClick={()=>{signOut(); setOpen(false)}}>Sign Out</Button> }    
         </Drawer>
 
         

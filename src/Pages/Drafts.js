@@ -19,6 +19,7 @@ export default function({userData, db, setSendValue}) {
     }
     return <Box className='App-header' sx={{ml:{lg:'240px'}, maxWidth:{lg:'calc(100vw - 260px)'}}}>   
         {userData.drafts?.length > 0 ? <List>
+            <h4>Drafts</h4>
             {userData.drafts?.map(draft=>(
                 <ListItem button onClick={()=>setSend({open:true,data:draft})}
                 secondaryAction={<IconButton sx={{color:'#fff'}} 
@@ -28,6 +29,18 @@ export default function({userData, db, setSendValue}) {
             ))}
         </List> : <Box sx={{textAlign:'center', mt:10}}>
             No Drafts Saved
+        </Box>}
+        {userData.scheduled?.length > 0 ? <List>
+            <h4>Scheduled</h4>
+            {userData.scheduled?.map(scheduled=>(
+                <ListItem button disabled={scheduled.sent} onClick={()=>alert('Info Coming Soon')}
+                secondaryAction={<IconButton sx={{color:'#fff'}} 
+                    onClick><Delete/></IconButton>}>
+                    {scheduled.body.length > 35 ? scheduled.body.substring(0,34).concat('...'):scheduled.body}
+                </ListItem>
+            ))}
+        </List> : <Box sx={{textAlign:'center', mt:10}}>
+            No Scheduled Texts
         </Box>}
         <Dialog fullWidth open={remove.open} onClose={()=>setRemove(false)}>
             <DialogTitle>Delete Draft?</DialogTitle>
