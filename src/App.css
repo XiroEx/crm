@@ -1,10 +1,34 @@
+html {
+  background-color: #282c34;
+  overflow: hidden;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
 .App {
   text-align: center;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .App-logo {
   height: 40vmin;
-  pointer-events: none;
+}
+
+.hidden {
+  display: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+.pulse {
+  animation: pulse 2s infinite;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -37,17 +61,38 @@
     opacity: 0;
   }
 
+  .scroll-in-top {
+    animation: scrollInTop forwards 200ms;
+    overflow: hidden;
+  }
+  
+  .scroll-out-top {
+    animation: scrollOutTop forwards 200ms;
+    overflow: hidden;
+  }
 }
 
-.App-header {
+.App-header-centered {
   background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+.App-header {
+  background-color: #282c34;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  padding: 10px;
+  padding-top: 68px;
+  position: relative;
+  text-align: left;
+  width: calc(100vw - 20px);
 }
 
 .App-link {
@@ -98,4 +143,40 @@
       transform: translateX(50%);
   }
   to { opacity: 1 }
+}
+
+@keyframes scrollInTop {
+  from {
+      height: 0px;
+  }
+  to {
+    height: 44px;
+   }
+}
+
+@keyframes scrollOutTop {
+  from {
+      height: 44px;
+  }
+  to {
+    height: 0px;
+    visibility: hidden;
+   }
+}
+
+@keyframes pulse {
+	0% {
+		transform: scale(1.25);
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
+	}
+
+	70% {
+		transform: scale(1.45);
+		box-shadow: 0 0 0 5px rgba(0, 0, 0, 0);
+	}
+
+	100% {
+		transform: scale(1.25);
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+	}
 }

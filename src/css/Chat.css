@@ -1,0 +1,9 @@
+.chat {
+	position: relative;
+	margin: 0;
+	color: gray;
+	background-color: #fff;
+	padding: .85em 1em;
+	border-radius: .6rem;
+  	box-shadow:	0 0.125rem 0.5rem rgba(0, 0, 0, .3), 0 0.0625rem 0.125rem rgba(0, 0, 0, .2);
+}
