@@ -51,6 +51,10 @@ export function Home({
       <GoogleButton style={{margin:'auto'}} onClick={signInWithGoogle}/>
     </Box>
 
+    <Box sx={{mt:20, textAlign:'center', fontSize:'50%'}}>
+      *This is experimental software, use at own risk*<br/>
+      Check out the source code on <a href="https://github.com/XiroEx/crm" style={{color:'blue'}}>GitHub</a>
+    </Box>
     <Dialog open={signIn} onClose={()=>setSignIn(false)} fullWidth>
       <DialogTitle>
         Sign In With Email
