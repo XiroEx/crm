@@ -13,11 +13,6 @@ Send mass texts by typing or pasting numbers, or by using the excel spreadsheet 
 By virtue of being built on Twilio, a simple "stop" response in addition to other various common opt-out responses will remove the ability to text that specific number until a "start" or similar opt-in response is sent.\
 A "double text" setting exists on the `settings` page for mass messages, allowing you to realiable send or schedule marketing campaign messages without fear of sending a number multiple messages.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
 ## Numbers
 
 Buy, swap, & burn numbers on the fly for tons of area codes throughout the US.
