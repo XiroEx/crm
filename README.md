@@ -1,70 +1,43 @@
-# Getting Started with Create React App
+# A simple CRM application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+See it live at [George Anthony](https://crm.georgeanthony.net).
 
-## Available Scripts
+Send, receive, & schedule individual & mass text messages, buy and burn numbers in specific area codes, and save contacts with notes.
 
-In the project directory, you can run:
+## Mass Messaging 
 
-### `npm start`
+Send mass texts by typing or pasting numbers, or by using the excel spreadsheet uploader to automatically extract anything that resembles a phone number in that document.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### `double text & stop protection`
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+By virtue of being built on Twilio, a simple "stop" response in addition to other various common opt-out responses will remove the ability to text that specific number until a "start" or similar opt-in response is sent.\
+A "double text" setting exists on the `settings` page for mass messages, allowing you to realiable send or schedule marketing campaign messages without fear of sending a number multiple messages.
 
 ### `npm test`
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+## Numbers
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Buy, swap, & burn numbers on the fly for tons of area codes throughout the US.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Contacts
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Save contacts with multiple numbers, notes, and tags.
 
-### `npm run eject`
+### `tags`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Use tags to categorize contacts, combined with message scheduling for the ultimate marketing campaign solution.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## TODO/UNFINISHED
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Conversations
+- Billing Management
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Maybe one day
 
-## Learn More
+- Calls
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+**Note: this is still experimental software, use at your own risk**
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
