@@ -1,6 +1,6 @@
-import { AccountCircle, ArrowBack, ChevronLeft, Contacts, Drafts, FileOpen, Help, Inbox as InboxIcon, Menu as MenuIcon, Search as SearchIcon, Send, SendRounded, Settings } from '@mui/icons-material';
+import { AccountCircle, ArrowBack, ArrowDownward, ArrowUpward, ChevronLeft, Contacts, Drafts, FileOpen, Folder, Group, Help, Inbox as InboxIcon, Menu as MenuIcon, Message, PunchClock, Search as SearchIcon, Send, SendRounded, Settings, Work } from '@mui/icons-material';
 import {
-    AppBar, Backdrop, Box, Button, CircularProgress, Dialog, Divider, Drawer, Grid, IconButton, Input, List, ListItem, ListItemIcon, ListItemText, Snackbar, Toolbar, Typography, useMediaQuery, useTheme, DialogActions, DialogContent, DialogTitle 
+    AppBar, Backdrop, Box, Button, CircularProgress, Dialog, Divider, Drawer, Grid, IconButton, Input, List, ListItem, ListItemIcon, ListItemText, Snackbar, Toolbar, Typography, useMediaQuery, useTheme, DialogActions, DialogContent, DialogTitle, Collapse 
 } from '@mui/material';
 import React, { useRef } from "react";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -20,6 +20,8 @@ export function Nav({auth, searchTarget, logged, user, signOut, setSendTarget, s
     const [open, setOpen] = React.useState(false)
     const [back, setBack] = React.useState(location.pathname.split('/').length > 2)
     const [upload, setUpload] = React.useState(false)
+    const [expandConnect, setExpandConnect] = React.useState(false)
+    const [expandWork, setExpandWork] = React.useState(false)
     const handleDrawerToggle = () => {
         setOpen(!open)
     }
@@ -47,7 +49,7 @@ export function Nav({auth, searchTarget, logged, user, signOut, setSendTarget, s
         }
     },[userData.lastMessage])
 
-    const icons = [<Send/>,<InboxIcon/>,<Drafts/>,<Contacts/>,<AccountCircle/>,<Settings/>, <Help/>]
+    const icons = [<Send/>,<InboxIcon/>,<Drafts/>,<Contacts/>,<AccountCircle/>,<Settings/>, <Help/>, <Group/>, <PunchClock/>, <Folder/>]
     const Menu = <>
         <Box><Toolbar>
             <IconButton onClick={handleDrawerToggle} sx={{display:{xs:'block', lg:'none', color:'#fff'}}} >
@@ -55,16 +57,43 @@ export function Nav({auth, searchTarget, logged, user, signOut, setSendTarget, s
             </IconButton>
         </Toolbar></Box>
         <Divider />
-        <List sx={{width:'240px',}}>
-        {['Send', 'Conversations', 'Drafts', 'Contacts'].map((text, index) => (
-            <ListItem button key={text} style={{color:'#fff'}} onClick={()=>{navigate(`/${text.toLowerCase()}`); handleDrawerToggle()}}>
-                <ListItemIcon  style={{color:'#fff'}} >
-                    {icons[index]}
-                </ListItemIcon>
-                <ListItemText primary={text}/>
-            </ListItem>
-        ))}
-        </List>
+        <ListItem button key={'ShowWork'} style={{color:'#fff'}} onClick={()=>{setExpandWork(!expandWork); setExpandConnect(false)}}>
+            <ListItemIcon  style={{color:'#fff'}} >
+                {expandWork ? <ArrowUpward /> : <Work />}
+            </ListItemIcon>
+            <ListItemText primary={'Work'}/>
+        </ListItem>
+        <Collapse in={expandWork}>
+            <List sx={{width:'240px',}}>
+            {[ 'Organization', 'Timesheet', 'Projects'].map((text, index) => (
+                <ListItem button key={text} style={{color:'#fff', paddingLeft:'30px'}} onClick={()=>{navigate(`/${text.toLowerCase()}`); handleDrawerToggle()}}>
+                    <ListItemIcon  style={{color:'#fff'}} >
+                        {icons[index+7]}
+                    </ListItemIcon>
+                    <ListItemText primary={text}/>
+                </ListItem>
+            ))}
+            </List>
+        </Collapse>
+        <Divider />
+        <ListItem button key={'ShowConnect'} style={{color:'#fff'}} onClick={()=>{setExpandConnect(!expandConnect); setExpandWork(false)}}>
+            <ListItemIcon  style={{color:'#fff'}} >
+                {expandConnect ? <ArrowUpward /> : <Message />}
+            </ListItemIcon>
+            <ListItemText primary={'Connect'}/>
+        </ListItem>
+        <Collapse in={expandConnect}>
+            <List sx={{width:'240px',}}>
+            {['Send', 'Conversations', 'Drafts', 'Contacts'].map((text, index) => (
+                <ListItem button key={text} style={{color:'#fff', paddingLeft:'30px'}} onClick={()=>{navigate(`/${text.toLowerCase()}`); handleDrawerToggle()}}>
+                    <ListItemIcon  style={{color:'#fff'}} >
+                        {icons[index]}
+                    </ListItemIcon>
+                    <ListItemText primary={text}/>
+                </ListItem>
+            ))}
+            </List>
+        </Collapse>
         <Divider />
         <List>
         {['Account', 'Settings', 'Help'].map((text, index) => (

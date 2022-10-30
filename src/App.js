@@ -21,10 +21,12 @@ import { Account } from './Pages/Account';
 import Checkout from './Pages/Checkout';
 import { Contacts } from './Pages/Contacts';
 import { Conversations } from './Pages/Conversations';
+import { Dashboard } from './Pages/Dashboard';
 import Drafts from './Pages/Drafts';
 import { Home } from './Pages/Home';
 import { Send } from './Pages/Send';
 import Settings from './Pages/Settings';
+import { Timesheet } from './Pages/Timesheet';
 import firebase from './utilities/firebaseconfig.js';
 
 const app = initializeApp(firebase)
@@ -146,17 +148,19 @@ function App() {
         <Nav {...props} extended={true} searchTarget={searchTarget} signOut={logOut} signInWithGoogle={signInWithGoogle}/>
         {userData && <>
           {userData.billing && <Routes>
-            <Route path="/send" element ={ <Send {...props}/>}/>
-            <Route path="/drafts" element ={ <Drafts {...props}/>}/>
-            <Route path="/account" element ={ <Account {...props}/>}/>
-            <Route path="/settings" element ={ <Settings {...props}/>}/>
+            <Route path="/" element ={<Dashboard {...props}/>}/>
+            <Route path="/send" element ={<Send {...props}/>}/>
+            <Route path="/drafts" element ={<Drafts {...props}/>}/>
+            <Route path="/timesheet" element ={<Timesheet {...props}/>}/>
+            <Route path="/account" element ={<Account {...props}/>}/>
+            <Route path="/settings" element ={<Settings {...props}/>}/>
             <Route path="/help" element ={ SOON}/>
             <Route path="/checkout">
-              <Route index element={<Checkout />} />
+              <Route index element={<Checkout />}/>
               <Route path=':id' element={<Checkout />}/>
             </Route>
             <Route path="/contacts">
-              <Route index element={<Contacts {...props}/>} />
+              <Route index element={<Contacts {...props}/>}/>
               <Route path=':number' element={<Contacts {...props}/>}/>
             </Route>
             <Route path="/conversations">
@@ -166,7 +170,7 @@ function App() {
             <Route path='/error' element = {<Navigate to='/account'/>}/>
             <Route path='/success' element = {<Navigate to='/account'/>}/>
             <Route path='*' element = {<Navigate to={`/${userData.numbers.length == 0 ? 
-            'account' : 'send'}`}/>} />
+            'account' : ''}`}/>} />
           </Routes>}
           {!userData.billing && <AddBilling { ...{...props, createBilling, addBilling}}/>}
         </>}

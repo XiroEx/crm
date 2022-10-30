@@ -1,5 +1,5 @@
-import { Delete } from "@mui/icons-material";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, List, ListItem, useMediaQuery, useTheme } from "@mui/material";
+import { Add, Delete } from "@mui/icons-material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, IconButton, List, ListItem, useMediaQuery, useTheme } from "@mui/material";
 import { arrayRemove, doc, updateDoc } from "firebase/firestore";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -42,6 +42,11 @@ export default function({userData, db, setSendValue}) {
         </List> : <Box sx={{textAlign:'center', mt:10}}>
             No Scheduled Texts
         </Box>}
+
+        <Fab color="primary" sx={{position:'fixed', right:20, bottom:20}}>
+            <Add/>
+        </Fab>
+
         <Dialog fullWidth open={remove.open} onClose={()=>setRemove(false)}>
             <DialogTitle>Delete Draft?</DialogTitle>
             <DialogContent>{remove.data}</DialogContent>

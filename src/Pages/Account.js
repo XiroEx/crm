@@ -1,6 +1,6 @@
 import { TextField } from "@material-ui/core";
-import { AddCircle, Check, Close, Delete, SwapHoriz } from "@mui/icons-material";
-import { Backdrop, Box, Button, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, IconButton, List, ListItem, Snackbar } from "@mui/material";
+import { AddCircle, ArrowDownward, ArrowUpward, Check, Close, Delete, SwapHoriz } from "@mui/icons-material";
+import { Backdrop, Box, Button, Chip, CircularProgress, Collapse, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, IconButton, List, ListItem, Snackbar } from "@mui/material";
 import { collection, doc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useCollection, useCollectionData, useDocumentData } from "react-firebase-hooks/firestore";
@@ -25,6 +25,9 @@ export function Account({
   const [confirmCredits, setConfirmCredits] = useState(false)
   const [credits, setCredits] = useState(100)
   const [amount, setAmount] = useState(1000)
+  const [expandBill, setExpandBill] = useState(false)
+  const [expandNumbers, setExpandNumbers] = useState(false)
+  const [expandOrganizations, setExpandOrganizations] = useState(false)
   const SOON = "coming soon\ncontact us on discord to add & delete numbers"
   const ONLY = "cannot delete only number"
 
@@ -75,6 +78,7 @@ export function Account({
   return <Box className='App-header' sx={{ml:{lg:'240px'}, maxWidth:{lg:'calc(100vw - 260px)'}}}>
     {isBilling && <Billing {...{userData, db, setBillData}}/>}
     <Box sx={{maxWidth:'800px', m:'auto', mt:3, width:'100%'}}>
+
       <Grid container spacing={1}>
         <Grid item xs={12} sx={{textAlign:'center'}}>
           <Button variant='contained' sx={{m:1}} onClick={()=>{
@@ -113,72 +117,98 @@ export function Account({
           {!(amount%100==0) && <p style={{fontSize:'40%', color:'red'}}>Enter Multiples of 100</p> }
         </Grid>
       </Grid>
-      <Grid container spacing={1}>
-        <Grid item xs={12}>
-          Billing
+
+      <Grid container spacing={1} sx={{pt:2, borderBottom:0.5, borderColor:'gray'}}>
+        <Grid container item xs={12} onClick={()=>setExpandNumbers(!expandNumbers)}>
+          <Grid item xs={4}>Numbers</Grid>
+          <Grid item xs={6} sx={{textAlign:'right', fontSize:'65%', }}><i sx={{}}>{`active: ${userData.numbers[0]}`}</i></Grid>
+          <Grid item xs={2} sx={{textAlign:'right', fontSize:'10%', }}>{expandNumbers ? <ArrowUpward/>:<ArrowDownward/>}</Grid>
         </Grid>
         <Grid item xs={12}>
-          <List sx={{width:'100%', maxWidth:'800px', m:'auto', textAlign:'center'}}>
-            {!isBilling && <ListItem button onClick={()=>{
-                alert(`Billing is ${userData.active ? 'active' : 'inactive'}.`)
-              }} 
-              secondaryAction={<IconButton sx={{color:'#fff'}}
-                onClick={(e)=>{
-                  e.stopPropagation()
-                  alert(`Coming soon. Contact support to change billing account.`)
-                }}><SwapHoriz/></IconButton>}>
-                <Grid container>
-                  <Grid item xs={2}>
-                    {userData.active ? <Check color='primary' onClick={fActivate}/> : 
-                      <Close color='error' onClick={fActivate}/>}
+          <Collapse in={expandNumbers} sx={{w:'100%'}}>
+            <List sx={{width:'100%', maxWidth:'800px', m:'auto', textAlign:'center'}}>
+              {userData.numbers.map(n=>(<>
+                <ListItem button sx={{width:'100%'}} onClick={(e)=>{
+                  if (n!=active) saveActive(n)
+                }} secondaryAction={userData.numbers.length > 1 ? <IconButton sx={{color:'#fff'}} onClick={(e)=>{e.stopPropagation();alert(userData.numbers.length == 1 ? ONLY : SOON)}}>
+                    <Delete/></IconButton> : <></>}>
+                  <Grid container>
+                    <Grid item xs={2}>
+                      {n==active ? <Check color='primary'/> : ''}
+                    </Grid>
+                    <Grid item xs={10}>
+                      {n}
+                    </Grid>
                   </Grid>
-                  <Grid item xs={10}>
-                    {userData.billmail}
-                  </Grid>
-                </Grid>
-            </ListItem>}
-            {isBilling && billData && billData.accounts.map( data =>(
-              <ListItem button onClick={()=>setAccount(data)}>
-                <Grid container>
-                  <Grid item xs={2}>
-                    {data.active ? <Check color='primary' onClick={fActivate}/> : 
-                      <Close color='error' onClick={fActivate}/>}
-                  </Grid>
-                  <Grid item xs={10}>
-                    {data.email}
-                  </Grid>
-                </Grid>
-              </ListItem>
-            ))}
-          </List>
+                </ListItem>
+              </>))}
+              <ListItem sx={{justifyContent:'flex-end', pr:0}}><IconButton color="primary" onClick={()=>getNums()}><AddCircle/></IconButton></ListItem>
+            </List>
+          </Collapse>
         </Grid>
       </Grid>
-      <Divider sx={{mb:4, mt:2}}/>   
-      <Grid container spacing={1}>
-        <Grid item xs={12}>
-          Numbers
+      
+      <Grid container spacing={1} sx={{pt:2, borderBottom:0.5, borderColor:'gray'}}>
+        <Grid container item xs={12} onClick={()=>setExpandOrganizations(!expandOrganizations)}>
+          <Grid item xs={4}>Organizations</Grid>
+          <Grid item xs={6} sx={{textAlign:'right', fontSize:'65%', }}><i sx={{}}>{`active: ${userData.organizations? userData.organizations[0] : 'NONE'}`}</i></Grid>
+          <Grid item xs={2} sx={{textAlign:'right', fontSize:'10%', }}>{expandOrganizations ? <ArrowUpward/>:<ArrowDownward/>}</Grid>
         </Grid>
         <Grid item xs={12}>
-          <List sx={{width:'100%', maxWidth:'800px', m:'auto'}}>
-            {userData.numbers.map(n=>(<>
-              <ListItem button sx={{width:'100%'}} onClick={(e)=>{
-                if (n!=active) saveActive(n)
-              }} secondaryAction={userData.numbers.length > 1 ? <IconButton sx={{color:'#fff'}} onClick={(e)=>{e.stopPropagation();alert(userData.numbers.length == 1 ? ONLY : SOON)}}>
-                  <Delete/></IconButton> : <></>}>
-                <Grid container>
-                  <Grid item xs={2}>
-                    {n==active ? <Check color='primary'/> : ''}
-                  </Grid>
-                  <Grid item xs={10}>
-                    {n}
-                  </Grid>
-                </Grid>
-              </ListItem>
-            </>))}
-            <ListItem sx={{justifyContent:'flex-end', pr:0}}><IconButton color="primary" onClick={()=>getNums()}><AddCircle/></IconButton></ListItem>
-          </List>
+          <Collapse in={expandOrganizations}>
+            <List sx={{width:'100%', maxWidth:'800px', m:'auto', textAlign:'center'}}>
+              <ListItem button sx={{width:'100%'}}> NONE </ListItem>
+              <ListItem sx={{justifyContent:'flex-end', pr:0, width:'100%'}}><IconButton color="primary" onClick={()=>getNums()}><AddCircle/></IconButton></ListItem>
+            </List>
+          </Collapse>
         </Grid>
       </Grid>
+
+      <Grid container spacing={1} sx={{pt:2, borderBottom:0.5, borderColor:'gray'}}>
+        <Grid container item xs={12} onClick={()=>setExpandBill(!expandBill)}>
+          <Grid item xs={4}>Billing</Grid>
+          <Grid item xs={6}></Grid>
+          <Grid item xs={2} sx={{textAlign:'right', fontSize:'10%', }}>{expandBill ? <ArrowUpward/>:<ArrowDownward/>}</Grid>
+        </Grid>
+        <Grid container item xs={12}>
+          <Collapse in={expandBill}>
+            <List sx={{width:'100%', maxWidth:'800px', m:'auto', textAlign:'center'}}>
+              {!isBilling && <ListItem button onClick={()=>{
+                  alert(`Billing is ${userData.active ? 'active' : 'inactive'}.`)
+                }} 
+                secondaryAction={<IconButton sx={{color:'#fff'}}
+                  onClick={(e)=>{
+                    e.stopPropagation()
+                    alert(`Coming soon. Contact support to change billing account.`)
+                  }}><SwapHoriz/></IconButton>}>
+                  <Grid container>
+                    <Grid item xs={2}>
+                      {userData.active ? <Check color='primary' onClick={fActivate}/> : 
+                        <Close color='error' onClick={fActivate}/>}
+                    </Grid>
+                    <Grid item xs={10}>
+                      {userData.billmail}
+                    </Grid>
+                  </Grid>
+              </ListItem>}
+              {isBilling && billData && billData.accounts.map( data =>(
+                <ListItem button onClick={()=>setAccount(data)}>
+                  <Grid container>
+                    <Grid item xs={2}>
+                      {data.active ? <Check color='primary' onClick={fActivate}/> : 
+                        <Close color='error' onClick={fActivate}/>}
+                    </Grid>
+                    <Grid item xs={10}>
+                      {data.email}
+                    </Grid>
+                  </Grid>
+                </ListItem>
+              ))}
+            </List>
+          </Collapse>
+        </Grid>
+      </Grid> 
+
     </Box>
     <Snackbar
       anchorOrigin={{ vertical:'bottom', horizontal:'center' }}

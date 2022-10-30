@@ -1,4 +1,5 @@
-import { Box, Checkbox, CircularProgress, FormControlLabel, List, Typography } from "@mui/material";
+import { Add } from "@mui/icons-material";
+import { Box, Checkbox, CircularProgress, Fab, FormControlLabel, List, Typography } from "@mui/material";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Chatbox } from '../Components/Chatbox';
@@ -100,7 +101,7 @@ export function Conversations({buildInbox, inbox, setInbox, userData, active, bu
     }
   }
 
-  return <Box className="App-header" sx={{ ml:{lg:'240px'}, maxWidth:{lg:'calc(100vw - 260px)'}}}>
+  return <Box className="App-header" sx={{ ml:{lg:'240px'}, maxWidth:{lg:'calc(100vw - 260px)'}, pb:10}}>
     
     {params.number && inbox && <>
       <List>
@@ -128,5 +129,9 @@ export function Conversations({buildInbox, inbox, setInbox, userData, active, bu
     </List></>}
     {inbox?.length === 0 && 'No Conversations'}
     {inbox === false && <CircularProgress sx={{margin:'auto', padding:10}}/>}
+    
+    <Fab color="primary" sx={{position:'fixed', right:20, bottom:20}}>
+      <Add/>
+    </Fab>
   </Box>
 }

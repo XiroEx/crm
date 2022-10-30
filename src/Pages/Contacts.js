@@ -1,5 +1,5 @@
-import { AddCircle } from "@mui/icons-material"
-import { Box, Grid, IconButton, List, ListItem } from "@mui/material"
+import { Add, AddCircle } from "@mui/icons-material"
+import { Box, Fab, Grid, IconButton, List, ListItem } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { AddContact } from "../Components/AddContact"
@@ -28,20 +28,24 @@ export function Contacts({
   },[])
   
   return <Box className='App-header' sx={{ml:{lg:'240px'}, maxWidth:{lg:'calc(100vw - 260px)'}}}>   
-    <Box sx={{maxWidth:'800px', m:'auto', width:'100%', mt:2}}>{!params.number && <>
-      {Object.keys(dataObject).map(letter =>(
-        <Grid container sx={{width:'100%'}}>
-          <Grid item xs={1}>{letter}</Grid>
-          <Grid item xs={11}>
-            <List sx={{width:'100%'}}>
-              {dataObject[letter].map(c=>(
-                <ListItem button onClick={()=>navigate(`/contacts/${c.primary}`)}>{c.name}</ListItem>
-              ))}
-            </List>
+    <Box sx={{maxWidth:'800px', m:'auto', width:'100%', mt:2}}>
+      {!params.number && <>
+        {Object.keys(dataObject).map(letter =>(
+          <Grid container sx={{width:'100%'}}>
+            <Grid item xs={1}>{letter}</Grid>
+            <Grid item xs={11}>
+              <List sx={{width:'100%'}}>
+                {dataObject[letter].map(c=>(
+                  <ListItem button onClick={()=>navigate(`/contacts/${c.primary}`)}>{c.name}</ListItem>
+                ))}
+              </List>
+            </Grid>
           </Grid>
-        </Grid>
-      ))}
-      <ListItem sx={{justifyContent:'flex-end', pr:0}}><IconButton color="primary" onClick={()=>{setAdd(true)}}><AddCircle/></IconButton></ListItem></>}
+        ))}
+        <Fab color="primary" onClick={()=>{setAdd(true)}} sx={{position:'fixed', right:20, bottom:20}}>
+            <Add/>
+        </Fab>
+      </>}
       {contact && <Contact {...props} contact={contact}/>}
     </Box>
 
