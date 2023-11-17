@@ -1,4 +1,6 @@
 # A simple CRM application
+## ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) *TWILIO HAS TEMPORARILY KILLED THIS PROJECT UNTIL I CAN REGISTER A BRAND AND CAMPAIGN WITH THEM (SOON)* ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png)
+
 
 See it live at [George Anthony](https://crm.georgeanthony.net).
 
